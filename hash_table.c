@@ -1,45 +1,35 @@
 #include "hash_table.h"
+#include <stdio.h>
+#include "utilits.h"
+#include <string.h>
 
-key_t hash_function(key_t key)
+key_t hash_function(key_t key, int capacity)
 {
-	return key % MAX_ITEMS;
+	return key % capacity;
 }
 
-//Результат: 0 - если элемент включен в таблицу
-//			-1 - если в таблице есть элемент с заданным ключом  
-//			-2 - если в таблице нет свободного места
-int insert(key_t k, Type input)
+void init_table(int capacity)
 {
-	int start = 0, i = 0, h = 1; //start - исходная позиция таблицы, h - шаг перемешивания
-	start = i = hash_function(k);
-	while (vector[i].busy > 0) //позиция занята
+	vector = (Item*)malloc(capacity * sizeof(Item));
+	for (int i = 0; i < capacity; i++)
 	{
-		//элемент с заданным ключом есть в таблице
-		if (vector[i].key == k)
-			return -1; 
-		i = (i + h) % MAX_ITEMS;		
-		//вернулись в исходную позицию
-		if (i == start)
-			return -2;
+		vector[i].busy = 0;
+		vector[i].key = 0;
+		vector[i].info = NULL;
 	}
-	//если ок, то занесение нового элемента
-	vector[i].key  = k;
-	vector[i].busy = 1;
-	vector[i].info = input;
-	return 0;
 }
 
 //поиск элемента в таблице
 //Результат: -1 - нет искомого элемента
-int search(key_t k)
+int search(key_t k, int capacity)
 {
 	int start = 0, i = 0, h = 1; //start - исходная позиция таблицы, h - шаг перемешивания
-	start = i = hash_function(k);
+	start = i = hash_function(k, capacity);
 	while (vector[i].busy >= 0) //позиция занята
 	{
 		if (vector[i].busy > 0 && vector[i].key == k)
 			return i;
-		i = (i + h) % MAX_ITEMS;
+		i = (i + h) % capacity;
 		//вернулись в исходную позицию
 		if (i == start)
 			break;
@@ -47,24 +37,62 @@ int search(key_t k)
 	return -1;
 }
 
-int delete_element(key_t k) {    // пометить запись как удаленную, т.к. нельзя перемешивать после физ. удаления записей.
+//Результат: 0 - если элемент включен в таблицу
+//			-1 - если в таблице есть элемент с заданным ключом  
+//			-2 - если в таблице нет свободного места
+int insert(key_t k, int capacity)
+{
+	int start = 0, i = 0, h = 1; //start - исходная позиция таблицы, h - шаг перемешивания
+	start = i = hash_function(k, capacity);
+
+		while (vector[i].busy > 0) //позиция занята
+		{
+			if (vector[i].key == k)
+				return -1;
+			i = (i + h) % capacity;
+
+			//вернулись в исходную позицию
+			if (i == start)
+				return -2;
+		}
+	
+	//если ок, то занесение нового элемента
+	vector[i].key = k;
+	vector[i].busy = 1;
+	char buf[81];
+	int len = 0, n = 0;
+	
+	//n = scanf("%80[^\n]", buf);
+	scanf("%s", &buf);
+	
+	len = strlen(buf);
+	printf("%d", len);
+	vector[i].info = (Type)malloc(len * sizeof(char));
+	strcpy(vector[i].info, buf);
+	//vector[i].info = getline(vector[i].info);
+	return 0;
+}
+
+// пометить запись как удаленную, т.к. нельзя перемешивать после физ. удаления записей.
+int delete_element(key_t k, int capacity) {   
 	int i;
-	i = search(k);
+	i = search(k, capacity);
 	if (i > 0) {
-		/*free(vector[i].info);*/
 		vector[i].info = NULL;
 		vector[i].busy = -1;
+		free(vector[i].info);
 		i = 0;
 	}
 	return i;
 }
 
-void print_table()
+void print_table(int capacity)
 {
 	int i;
-	printf("      KEY        busy            INFO         \n");
-	for (i = 0; i < MAX_ITEMS; i++)
+	system("cls");
+	printf("KEY	 busy	      INFO\n");
+	for (i = 0; i < capacity; i++)
 	{
-		printf("\n      %3d       %3d          %10s    \n", vector[i].key, vector[i].busy, vector[i].info);		
+		printf("\n%3d	%3d	  %10s ", vector[i].key, vector[i].busy, vector[i].info);
 	}
 }

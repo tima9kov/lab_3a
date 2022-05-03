@@ -4,9 +4,9 @@
 //Написать программу для работы с перемешанной таблицей, использующей перемешивание сложением, по запросам оператора.
 //Перемешанная таблица организована вектором; каждый элемент таблицы имеет следующую структуру :
 //struct Item {
-//	int busy;		/* признак занятости элемента	*/
+//	int busy;		/* признак занятости элемента*/
 //	int key;		/* ключ элемента				*/
-//	char* info;	/* указатель на информацию		*/
+//	char* info;	/* указатель на информацию	
 //};
 //
 //Максимальный размер таблицы ограничен(для задания максимального размера таблицы использовать константу – например, const int SIZE = ...;).
@@ -29,26 +29,61 @@
 #include <malloc.h>
 #include <string.h>
 #include "hash_table.h"
-#include "messages.h"
+#include "utilits.h"
 
 int main()
-{
-	int i;
-	insert(1, "a");
-	insert(11, "ab");
-	insert(21, "abc");
-	insert(23, "abcd");
-	print_table();
-	system("pause");
-	system("CLS");
+{	
+	int capacity = 5, choice = 0, availability = 0;
+	key_t key = 0;
+	capacity = get_size(capacity);
+	init_table(capacity);
 
-	i = delete_element(21);
-	printf("%d\n\n", i);
+	do {
+		print_menu();
+		choice = select_action(choice);
+		//system("pause");
+		if (choice == EXIT)
+			break;
+		if (choice == ADD_ELEMENT)
+		{
+			key = get_key(key);
 
-	print_table();
+			availability = insert(key, capacity);
+				if (availability == -1)
+					duplicated_key();
+				if (availability == -2)
+					full_table();
+		}
+		if (choice == DELETE_ELEMENT)
+		{
+			key = get_key(key);
+
+			availability =  delete_element(key, capacity);
+			if (availability == -1) {
+				not_found();
+			}
+			else
+				printf("deleted");
+		}
+		if (choice == FIND_ELEMENT)
+		{
+			key = get_key(key);
+			availability = search(key, capacity);
+			if (availability == -1) {
+				not_found();
+			}
+			else
+				show_element(availability);
+		}
+		if (choice == SHOW_TABLE)
+		{
+			print_table(capacity);
+		}
+	} while (choice != 0);
+	
+	free(vector->info);
+	free(vector);
+
 	system("pause");
-	system("CLS");
-	i = search(21);
-	printf("%d", i);
 	return 0;
 }
