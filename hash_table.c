@@ -54,22 +54,11 @@ int insert(key_t k, int capacity)
 			//вернулись в исходную позицию
 			if (i == start)
 				return -2;
-		}
-	
+		}	
 	//если ок, то занесение нового элемента
 	vector[i].key = k;
 	vector[i].busy = 1;
-	char buf[81];
-	int len = 0, n = 0;
-	
-	//n = scanf("%80[^\n]", buf);
-	scanf("%s", &buf);
-	
-	len = strlen(buf);
-	printf("%d", len);
-	vector[i].info = (Type)malloc(len * sizeof(char));
-	strcpy(vector[i].info, buf);
-	//vector[i].info = getline(vector[i].info);
+	get_line(i);
 	return 0;
 }
 

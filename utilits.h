@@ -11,7 +11,7 @@ enum choice
 	SHOW_TABLE
 };
 
-char* getline(void);
+void get_line(int);
 int get_size();
 int select_action(int choice);
 int get_key(key_t k);

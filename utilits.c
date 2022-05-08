@@ -5,25 +5,54 @@
 void print_menu()
 {
 	printf("\n0 - exit, 1 - add element, 2 - delete element,3 - search, 4 - print table\n");
-}
+}	
 
 int select_action(int choice)
 {
+	int condition = 0;
 	printf("Your choice . . . ");
-	scanf("%d",&choice);
+	while (1 != scanf("%d", &choice) || choice > 4 || choice < 0) {
+		rewind(stdin);
+		printf("\x1b[31mIncorrect input, try again\x1b[0m");
+	}
 	return choice;
 }
 
 int get_key(key_t k) {
-	printf("Input key");
-	scanf("%d",&k);
+	printf("Input key ");
+	while (1 != scanf("%d", &k)) {
+		rewind(stdin);
+		printf("\x1b[31mIncorrect input, try again\x1b[0m");
+	}
 	return k;
+}
+
+void get_line(int i)
+{
+	char* str = NULL, c;
+	int len = 1;
+	str = (char*)malloc(sizeof(char));
+	printf("input string: ");
+	rewind(stdin);
+	while ((c = getchar()) != '\n') {
+		str[len - 1] = c;
+		len++;
+		str = (char*)realloc(str, len);
+	}
+	str[len - 1] = '\0';
+	printf("%s (%d symbols)\n", str, len - 1);
+	vector[i].info = (Type)malloc(len * sizeof(char));
+	strcpy(vector[i].info, str);
+	free(str);
 }
 
 int get_size() {
 	int size = 0;
 	printf("Input table size ... ");
-	scanf("%d",&size);
+	while (1 != scanf("%d", &size)) {
+		rewind(stdin);
+		printf("\x1b[31mIncorrect input, try again ... \x1b[0m");
+	}
 	return size;
 }
 
